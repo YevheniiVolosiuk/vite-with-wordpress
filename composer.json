@@ -1,45 +1,47 @@
 {
-    "name": ":vendor_slug/:package_slug",
-    "description": ":package_description",
+    "name": "yevheniivolosiuk/vite-with-wordpress",
+    "description": "A simple, elegant Vite integration for WordPress themes and plugins — inspired by Laravel's Vite helper, providing seamless asset management, HMR support, and production-ready manifest handling. ",
     "keywords": [
-        ":vendor_name",
-        ":package_slug"
+        "YevheniiVolosiuk",
+        "vite-with-wordpress",
+        "wordpress",
+        "vite"
     ],
-    "homepage": "https://github.com/:vendor_slug/:package_slug",
+    "homepage": "https://github.com/yevheniivolosiuk/vite-with-wordpress",
     "license": "MIT",
     "authors": [
         {
-            "name": ":author_name",
-            "email": "author@domain.com",
+            "name": "Yevhenii Volosiuk",
+            "email": "volosiukweb@gmail.com",
             "role": "Developer"
         }
     ],
     "require": {
-        "php": "^8.4"
+        "php": ">=8.0"
     },
     "require-dev": {
-        :require_dev_testing,
-        :require_dev_codestyle,
-        "spatie/ray": "^1.28"
+        "pestphp/pest": "^3.0",
+        "laravel/pint": "^1.0"
     },
     "autoload": {
         "psr-4": {
-            "VendorName\\Skeleton\\": "src"
+            "YevheniiVolosiuk\\ViteWithWordPress\\ViteBase\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "VendorName\\Skeleton\\Tests\\": "tests"
+            "YevheniiVolosiuk\\ViteWithWordPress\\ViteBase\\Tests\\": "tests"
         }
     },
     "scripts": {
-        :scripts_testing,
-        :scripts_codestyle
+        "test": "vendor/bin/pest",
+            "test-coverage": "vendor/bin/pest --coverage",
+        "format": "vendor/bin/pint"
     },
     "config": {
         "sort-packages": true,
         "allow-plugins": {
-            :plugins_testing,
+            "pestphp/pest-plugin": true,
             "phpstan/extension-installer": true
         }
     },
