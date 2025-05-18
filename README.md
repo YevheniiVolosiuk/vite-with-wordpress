@@ -1,56 +1,166 @@
-# A simple, elegant Vite integration for WordPress themes and plugins — inspired by Laravel's Vite helper, providing seamless asset management, HMR support, and production-ready manifest handling. 
-
+# Vite With WordPress
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/yevheniivolosiuk/vite-with-wordpress.svg?style=flat-square)](https://packagist.org/packages/yevheniivolosiuk/vite-with-wordpress)
 [![Tests](https://img.shields.io/github/actions/workflow/status/yevheniivolosiuk/vite-with-wordpress/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/yevheniivolosiuk/vite-with-wordpress/actions/workflows/run-tests.yml)
 [![Total Downloads](https://img.shields.io/packagist/dt/yevheniivolosiuk/vite-with-wordpress.svg?style=flat-square)](https://packagist.org/packages/yevheniivolosiuk/vite-with-wordpress)
 
-This is where your description should go. Try and limit it to a paragraph or two. Consider adding a small example.
+A simple, elegant Vite integration for WordPress themes and plugins — inspired by Laravel's Vite helper, providing seamless asset management, HMR support, and production-ready manifest handling.
+---
+Seamlessly integrate [Vite](https://vitejs.dev/) into your WordPress theme or plugin for fast, modern frontend development with hot module replacement (HMR) and efficient production builds.
 
-## Support us
+## Why use this?
 
-[<img src="https://github-ads.s3.eu-central-1.amazonaws.com/vite-with-wordpress.jpg?t=1" width="419px" />](https://spatie.be/github-ad-click/vite-with-wordpress)
+- Native WordPress support for Vite assets
+- Automatic dev server detection with HMR support
+- Manifest-based asset URL resolution for production
+- Easy static facade: `Vite::asset()` to get asset URLs
+- Injects `type="module"` on scripts for ES modules support
+- Supports extracting and enqueuing CSS linked from JS entrypoints
 
-We invest a lot of resources into creating [best in class open source packages](https://spatie.be/open-source). You can support us by [buying one of our paid products](https://spatie.be/open-source/support-us).
-
-We highly appreciate you sending us a postcard from your hometown, mentioning which of our package(s) you are using. You'll find our address on [our contact page](https://spatie.be/about-us). We publish all received postcards on [our virtual postcard wall](https://spatie.be/open-source/postcards).
+---
 
 ## Installation
 
-You can install the package via composer:
+1. **Clone or install the package into your WordPress theme or plugin folder via composer or copy just 2 classes located in `src/` to your project**
 
 ```bash
-composer require yevheniivolosiuk/vite-with-wordpress
+    composer require yevheniivolosiuk/vite-with-wordpress
 ```
 
-## Usage
+2. **Set up your Vite project** with your assets inside the theme/plugin directory, e.g. `resources/js/main.js`
+
+3. **Ensure your Vite config outputs assets to `/public/build`** inside your theme/plugin directory
+
+4. **Include PHP classes and `autoload` or simply `require` them into your theme/plugin:
 
 ```php
-$skeleton = new YevheniiVolosiuk/ViteWithWordPress\ViteBase();
-echo $skeleton->echoPhrase('Hello, YevheniiVolosiuk/ViteWithWordPress!');
+// Bootstrap plugin/theme file
+
+use YevheniiVolosiuk\ViteWithWordPress\Vite;
+
+if (file_exists(__DIR__ . '/vendor/autoload.php')) {
+    require_once __DIR__ . '/vendor/autoload.php';
+}
 ```
 
-## Testing
+---
+Bootstrap without composer via native PHP
+```php
+// Bootstrap plugin/theme file
 
-```bash
-composer test
+require_once 'path_to_new_classes/Vite.php'
 ```
 
-## Changelog
+## Vite Configuration Example
 
-Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
+```js
+// vite.config.js
 
-## Contributing
+import path from 'path';
+import { defineConfig } from 'vite';
+import laravel from 'laravel-vite-plugin';
 
-Please see [CONTRIBUTING](https://github.com/spatie/.github/blob/main/CONTRIBUTING.md) for details.
+export default defineConfig({
+    base: '/wp-content/themes/vite-with-wordpress/public/build',
+    plugins: [
+        laravel({
+            input: [
+                'resources/js/main.js',
+                'resources/js/plugins/slider.js',
+            ],
+            refresh: [
+                {
+                    paths: ['/**/*.php', '*.php']
+                }
+            ],
+        }),
+    ],
+    resolve: {
+        alias: {
+            '@styles': path.resolve(__dirname, 'resources/scss'),
+            '@scripts': path.resolve(__dirname, 'resources/js'),
+            '@images': path.resolve(__dirname, 'resources/images'),
+        },
+    },
+    server: {
+        host: "0.0.0.0",
+        port: 5173,
+        strictPort: true,
+        cors: {
+            origin: "https://your-local-dev-url.test",
+            credentials: true,
+        },
+        hmr: {
+            host: "localhost",
+            protocol: "ws",
+        },
+    },
+});
+```
 
-## Security Vulnerabilities
+## Usage in WordPress
 
-Please review [our security policy](../../security/policy) on how to report security vulnerabilities.
+```php
+use YevheniiVolosiuk\ViteWithWordPress\ViteBase;
 
-## Credits
+add_action('wp_enqueue_scripts', function () {
+    // Enqueue main JS file
+    wp_enqueue_script(
+        'main-script-file',
+        Vite::asset('resources/js/main.js'),
+        ['jquery'],
+        '1.0.0',
+        true
+    );
 
-- [Yevhenii Volosiuk](https://github.com/YevheniiVolosiuk)
-- [All Contributors](../../contributors)
+    // Enqueue main CSS linked from the JS entry point
+    wp_enqueue_style(
+        'main-style-file',
+        Vite::asset('resources/js/main.js', 'css'),
+        [],
+        '1.0.0',
+    );
+});
+```
+---
+# How It Works
+
+### Development mode (npm run dev):
+- Detects Vite dev server by checking hot file presence and uses HMR URLs for assets.
+
+### Production mode (npm run build):
+- Loads manifest.json from public/build/ to resolve hashed filenames for cache-busting.
+
+### Script tag enhancement:
+- Automatically injects type="module" attribute to scripts loaded via WordPress to enable native ES modules.
+
+---
+
+# API
+
+```php
+Vite::asset(string $assetPath, string|bool $css = ''): ?string
+```
+- Returns the full URL of the asset, adapting automatically to dev server or production build.
+- The second argument ('css' or true) returns the CSS file linked from a JS entrypoint, if available.
+- Returns null if the asset is unavailable.
+
+---
+
+# Troubleshooting
+- Verify `manifest.json` exists in public/build after running build.
+- Confirm `hot` file is present during dev server run.
+- Make sure your WordPress URL and Vite config base & server.cors.origin are correctly set.
+- Errors related to missing assets will trigger a detailed WordPress error message including suggestions.
+
+# Contributing
+
+Contributions welcome! Open an issue or pull request to improve the integration.
+
+# About
+
+Created and maintained by Yevhenii Volosiuk for modern WordPress development with Vite.
+
+Inspired by Laravel.
 
 ## License
 
