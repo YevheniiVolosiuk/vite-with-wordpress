@@ -28,8 +28,8 @@ class Vite
     {
         $instance = ViteBase::getInstance();
 
-        if (!method_exists($instance, $method)) {
-            throw new \BadMethodCallException("Method {$method} does not exist in " . static::class);
+        if (! method_exists($instance, $method)) {
+            throw new \BadMethodCallException("Method {$method} does not exist in ".static::class);
         }
 
         return $instance->$method(...$args);

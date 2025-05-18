@@ -12,7 +12,6 @@ namespace YevheniiVolosiuk\ViteWithWordPress\ViteBase;
  *
  * Provides a singleton instance and utility methods to resolve asset URLs,
  * detect running dev server, and inject `type="module"` attribute for ES modules.
- *
  */
 class ViteBase
 {
@@ -61,7 +60,7 @@ class ViteBase
     /**
      * Constructor.
      *
-     * @param array $config Configuration options like 'buildDirectory', 'hotFile', 'assetPathResolver'.
+     * @param  array  $config  Configuration options like 'buildDirectory', 'hotFile', 'assetPathResolver'.
      */
     public function __construct(array $config = [])
     {
@@ -74,7 +73,7 @@ class ViteBase
             $this->hotFile = $this->hotFile();
         }
 
-        if (!$this->scriptHooked) {
+        if (! $this->scriptHooked) {
             add_filter('script_loader_tag', [$this, 'addModuleAttribute'], 10, 3);
             $this->scriptHooked = true;
         }
@@ -87,7 +86,7 @@ class ViteBase
     {
 
         if (static::$instance === null) {
-            static::$instance = new static();
+            static::$instance = new static;
         }
 
         return static::$instance;
@@ -95,7 +94,6 @@ class ViteBase
 
     /**
      * Create or return the singleton instance with configuration.
-     *
      */
     public static function make(array $config = []): static
     {
@@ -110,16 +108,17 @@ class ViteBase
      * Resolve the URL for a given asset based on manifest and environment mode.
      */
     public function asset(
-        string      $asset,
+        string $asset,
         string|bool $cssArg = '',
-    ): string|null
-    {
+    ): ?string {
         $type = is_string($cssArg) || is_bool($cssArg) ? $cssArg : null;
         $cssEntry = $type === 'css' || $type === true;
         $buildDirectory = $args['buildDirectory'] ?? $this->buildDirectory;
 
         if ($this->isRunningHot()) {
-            if ($cssEntry) return null;
+            if ($cssEntry) {
+                return null;
+            }
 
             return $this->hotAsset($asset);
         }
@@ -159,8 +158,8 @@ class ViteBase
     {
         $path = $this->manifestPath($buildDirectory);
 
-        if (!isset(static::$manifests[$path])) {
-            if (!is_file($path)) {
+        if (! isset(static::$manifests[$path])) {
+            if (! is_file($path)) {
                 wp_die("Vite manifest not found at: $path");
             }
 
@@ -181,7 +180,7 @@ class ViteBase
             return null;
         }
 
-        if (!is_file($path = $this->manifestPath($buildDirectory))) {
+        if (! is_file($path = $this->manifestPath($buildDirectory))) {
             return null;
         }
 
@@ -201,7 +200,7 @@ class ViteBase
      */
     protected function manifestPath(string $buildDirectory): string
     {
-        return $this->publicPathDir($buildDirectory . '/' . $this->manifestFilename);
+        return $this->publicPathDir($buildDirectory.'/'.$this->manifestFilename);
     }
 
     /**
@@ -217,7 +216,7 @@ class ViteBase
      */
     protected function publicPath(string $path): string
     {
-        return get_template_directory_uri() . '/public/' . ltrim($path, '/');
+        return get_template_directory_uri().'/public/'.ltrim($path, '/');
     }
 
     /**
@@ -225,7 +224,7 @@ class ViteBase
      */
     protected function publicPathDir(string $path): string
     {
-        return get_template_directory() . '/public/' . ltrim($path, '/');
+        return get_template_directory().'/public/'.ltrim($path, '/');
     }
 
     /**
@@ -233,7 +232,7 @@ class ViteBase
      */
     protected function getChunkOrFail(array $manifest, string $file): array
     {
-        if (!isset($manifest[$file])) {
+        if (! isset($manifest[$file])) {
             $keys = array_keys($manifest);
 
             // Suggest the most similar match
@@ -253,7 +252,7 @@ class ViteBase
                 $message .= "\n\n👉 Did you mean: '{$suggested}'?";
             }
 
-            $message .= "\n\n📦 Available manifest keys:\n - " . implode("\n - ", $keys);
+            $message .= "\n\n📦 Available manifest keys:\n - ".implode("\n - ", $keys);
 
             wp_die(nl2br(esc_html($message)));
         }
@@ -274,7 +273,7 @@ class ViteBase
      */
     protected function hotAsset($asset): string
     {
-        return rtrim(file_get_contents($this->hotFile())) . '/' . $asset;
+        return rtrim(file_get_contents($this->hotFile())).'/'.$asset;
     }
 
     /**
@@ -292,9 +291,9 @@ class ViteBase
     /**
      * Handle JavaScript chunk assets from the manifest.
      */
-    protected function handleJs(array $chunk, string $dir, bool $cssEntry = false): string|null
+    protected function handleJs(array $chunk, string $dir, bool $cssEntry = false): ?string
     {
-        if ($cssEntry && !empty($chunk['css'])) {
+        if ($cssEntry && ! empty($chunk['css'])) {
             // Return the FIRST linked CSS file from the JS entry
             return $this->assetPath("{$dir}/{$chunk['css'][0]}");
         }
@@ -333,7 +332,7 @@ class ViteBase
             }
 
             // Or relative URLs (no http) in dev mode are also Vite assets
-            if (!str_starts_with($asset, 'http://') && !str_starts_with($asset, 'https://')) {
+            if (! str_starts_with($asset, 'http://') && ! str_starts_with($asset, 'https://')) {
                 return true;
             }
 
@@ -343,5 +342,4 @@ class ViteBase
         // In production, asset path must contain /build/
         return str_contains($asset, '/build/');
     }
-
 }
