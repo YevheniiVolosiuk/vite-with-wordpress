@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace YevheniiVolosiuk\ViteWithWordPress\ViteBase;
+namespace StubbornWeb\ViteWithWordPress\ViteBase;
 
 /**
  * ViteBase class for WordPress Vite integration.
@@ -11,7 +11,7 @@ namespace YevheniiVolosiuk\ViteWithWordPress\ViteBase;
  * to support Vite's development and production modes within WordPress themes/plugins.
  *
  * Provides a singleton instance and utility methods to resolve asset URLs,
- * detect running dev server, and inject `type="module"` attribute for ES modules.
+ * Detect running dev server, and inject `type="module"` attribute for ES modules.
  */
 class ViteBase
 {
