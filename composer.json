@@ -1,8 +1,9 @@
 {
-    "name": "yevheniivolosiuk/vite-with-wordpress",
+    "name": "stubbornweb/vite-with-wordpress",
     "description": "A simple, elegant Vite integration for WordPress themes and plugins — inspired by Laravel's Vite helper, providing seamless asset management, HMR support, and production-ready manifest handling. ",
     "keywords": [
-        "YevheniiVolosiuk",
+        "stubborn",
+        "stubbornweb",
         "vite-with-wordpress",
         "wordpress",
         "vite"
@@ -25,12 +26,12 @@
     },
     "autoload": {
         "psr-4": {
-            "YevheniiVolosiuk\\ViteWithWordPress\\ViteBase\\": "src"
+            "StubbornWeb\\ViteWithWordPress\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "YevheniiVolosiuk\\ViteWithWordPress\\ViteBase\\Tests\\": "tests"
+            "StubbornWeb\\ViteWithWordPress\\\\Tests\\": "tests"
         }
     },
     "scripts": {
