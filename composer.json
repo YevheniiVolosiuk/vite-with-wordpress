@@ -31,7 +31,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "StubbornWeb\\ViteWithWordPress\\\\Tests\\": "tests"
+            "StubbornWeb\\ViteWithWordPress\\Tests\\": "tests"
         }
     },
     "scripts": {
