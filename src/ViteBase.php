@@ -74,7 +74,7 @@ class ViteBase
         }
 
         if (! $this->scriptHooked) {
-            add_filter('script_loader_tag', [$this, 'addModuleAttribute'], 10, 3);
+            add_filter('script_loader_tag', [$this, 'addModuleAttributeForViteAssets'], 10, 3);
             $this->scriptHooked = true;
         }
     }
@@ -136,16 +136,15 @@ class ViteBase
     /**
      * Filter callback to add `type="module"` attribute to Vite JS script tags.
      */
-    public function addModuleAttribute(string $tag, string $handle, string $src): string
+    public function addModuleAttributeForViteAssets(string $tag, string $handle, string $src): string
     {
-        if ($this->isViteAsset($src) && $this->isJsFile($src)) {
-            // Remove existing type attribute (any case, with or without quotes)
-            $tag = preg_replace('/\s+type=["\']?text\/javascript["\']?/', '', $tag);
+        if ($this->isViteAsset($handle) && $this->isJsFile($src)) {
+            // Remove any existing type="text/javascript"
+            $tag = preg_replace('/\s+type=["\']text\/javascript["\']/', '', $tag);
 
-            // Add type="module" immediately after <script
-            $tag = preg_replace('/<script(\s+)/', '<script type="module" $1', $tag);
-
-            return $tag;
+            // Inject type="module" into the script tag
+            $tag = preg_replace('/<script(\s+)/', '<script type="module"$1', $tag);
+            error_log(print_r($tag, true));
         }
 
         return $tag;
@@ -315,31 +314,15 @@ class ViteBase
      */
     protected function isJsFile($asset): bool
     {
-        return str_ends_with($asset, '.js');
+        $path = parse_url($asset, PHP_URL_PATH);
+        return str_ends_with($path, '.js');
     }
 
     /*
-     * Determine if the given asset URL/path is a Vite asset.
+     * Determine if the given asset $handle contains vite name.
      */
     protected function isViteAsset(string $asset): bool
     {
-        if ($this->isRunningHot()) {
-            $devServerUrl = trim(file_get_contents($this->hotFile()));
-
-            // Check if asset URL starts with dev server URL (localhost:5173 etc.)
-            if (str_starts_with($asset, $devServerUrl)) {
-                return true;
-            }
-
-            // Or relative URLs (no http) in dev mode are also Vite assets
-            if (! str_starts_with($asset, 'http://') && ! str_starts_with($asset, 'https://')) {
-                return true;
-            }
-
-            return false;
-        }
-
-        // In production, asset path must contain /build/
-        return str_contains($asset, '/build/');
+        return str_contains($asset, 'vite');
     }
 }
