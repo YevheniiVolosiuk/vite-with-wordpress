@@ -315,6 +315,7 @@ class ViteBase
     protected function isJsFile($asset): bool
     {
         $path = parse_url($asset, PHP_URL_PATH);
+
         return str_ends_with($path, '.js');
     }
 
