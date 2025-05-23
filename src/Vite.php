@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace YevheniiVolosiuk\ViteWithWordPress\ViteBase;
+namespace StubbornWeb\ViteWithWordPress\ViteBase;
 
 /**
  * Facade class for the ViteBase service.
