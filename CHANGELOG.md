@@ -2,6 +2,12 @@
 
 All notable changes to `vite-with-wordpress` will be documented in this file.
 
+## 1.0.1 - 2025-05-23
+
+- Fix for module replacement for scripts
+- Update README
+- Update composer info
+
 ## 1.0.0 - 2025-05-18
 
 - Native WordPress support for Vite assets
