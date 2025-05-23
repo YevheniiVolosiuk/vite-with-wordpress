@@ -1,5 +1,5 @@
 # Vite With WordPress
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/yevheniivolosiuk/vite-with-wordpress.svg?style=flat-square)](https://packagist.org/packages/yevheniivolosiuk/vite-with-wordpress)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/stubbornweb/vite-with-wordpress.svg?style=flat-square)](https://packagist.org/packages/stubbornweb/vite-with-wordpress)
 [![Tests](https://img.shields.io/github/actions/workflow/status/yevheniivolosiuk/vite-with-wordpress/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/yevheniivolosiuk/vite-with-wordpress/actions/workflows/run-tests.yml)
 [![Total Downloads](https://img.shields.io/packagist/dt/yevheniivolosiuk/vite-with-wordpress.svg?style=flat-square)](https://packagist.org/packages/yevheniivolosiuk/vite-with-wordpress)
 
